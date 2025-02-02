@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Manager App</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; }
+        h1 { color: #333; }
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+
+<h1>Trading Manager App</h1>
+
+<label>Date:</label>
+<input type="date" id="dateInput">
+
+<label>Number:</label>
+<input type="number" id="numberInput">
+
+<label>Notes:</label>
+<textarea id="notesInput"></textarea>
+
+<button onclick="addTrade()">Add Trade</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Number</th>
+            <th>Notes</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="tradesTable"></tbody>
+</table>
+
+<script>
+    function loadTrades() {
+        const trades = JSON.parse(localStorage.getItem('trades')) || [];
+        const table = document.getElementById('tradesTable');
+        table.innerHTML = '';
+        trades.forEach((trade, index) => {
+            const row = `
+                <tr>
+                    <td>${trade.date}</td>
+                    <td>${trade.number}</td>
+                    <td>${trade.notes}</td>
+                    <td><button onclick="deleteTrade(${index})">Delete</button></td>
+                </tr>
+            `;
+            table.innerHTML += row;
+        });
+    }
+
+    function addTrade() {
+        const date = document.getElementById('dateInput').value;
+        const number = document.getElementById('numberInput').value;
+        const notes = document.getElementById('notesInput').value;
+
+        if (date && number) {
+            const newTrade = { date, number, notes };
+            const trades = JSON.parse(localStorage.getItem('trades')) || [];
+            trades.push(newTrade);
+            localStorage.setItem('trades', JSON.stringify(trades));
+            loadTrades();
+        } else {
+            alert('Please fill in both date and number.');
+        }
+    }
+
+    function deleteTrade(index) {
+        const trades = JSON.parse(localStorage.getItem('trades')) || [];
+        trades.splice(index, 1);
+        localStorage.setItem('trades', JSON.stringify(trades));
+        loadTrades();
+    }
+
+    loadTrades();
+</script>
+
+</body>
+</html>
